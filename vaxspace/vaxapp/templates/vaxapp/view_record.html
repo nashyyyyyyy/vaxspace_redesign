@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>VAXSPACE</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/alert.css' %}" rel="stylesheet">
+
+</head>
+<style>
+    @media print {
+        #printButton,
+        #goBackButton {
+            display: none;
+        }
+    }
+    .bg-image {
+        /* Add styles for the background image */
+        background-image: url('{% static 'img/vax_print.png' %}'); /* Replace 'path/to/your/image.jpg' with your image's URL or relative path */
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+</style>
+
+
+<body class="bg-gradient-primary">
+
+    
+                                        <div class="container " >
+                                           
+                                            <div class="card o-hidden border-0 shadow-lg my-5">
+                                                <div class="card-body p-0 bg-image">
+                                                    
+                                                    <!-- Nested Row within Card Body -->
+                                                    <div class="row">
+                                                        
+                                                        <div class="col-lg-7 mx-auto">
+                                                            <div class="p-5 text-gray-900">
+                                                                
+                                                                <h1 class="text-center">VAXSPACE</h1>
+                                                                <h4 class="text-center mb-4">VACCINATION RECORD OF {{view_id.child_name}}</h4>
+                                                                <div class="row">
+                                                                    <div class="col-md-6 text-center">
+                                                                        <h5 class="mb-1">{{view_id.date_of_birth}}<br><sup>Date of birth</sup></h5>
+                                                                        <h5 class="mb-1">{{view_id.place_of_birth}}<br><sup>Place of birth</sup></h5>
+                                                                        <h5 class="mb-1">{{view_id.address}}<br><sup>Address</sup></h5>
+                                                                        <h5 class="mb-1">{{view_id.sex}}<br><sup>Sex</sup></h5>
+                                                                    </div>
+                                                                    <div class="col-md-6 text-center">
+                                                                        <h5 class="mb-1">{{view_id.mother_name}}<br><sup>Mother's name</sup></h5>
+                                                                        <h5 class="mb-1">{{view_id.father_name}}<br><sup>Father's name</sup></h5>
+                                                                        <h5 class="mb-1">{{view_id.birth_height}} cm<br><sup>Current Birth height</sup></h5>
+                                                                        <h5 class="mb-1">{{view_id.birth_weight}} lbs<br><sup>Current Birth weight</sup></h5>
+                                                                    </div>  
+                                                                    
+                                                                </div>
+                                                                
+                                                                {% if vax_info is not none %}
+                                                                <div class="border rounded p-4 mb-4">
+                                                                    <h4 class="text-center mb-4">VACCINATION HISTORY</h4>
+                                                                    <ul class="list-group">
+                                                                        {% for vaxinfo in vax_info %}
+                                                                            <li class="list-group-item">
+                                                                                <div class="row">
+                                                                                    <div class="col text-center">
+                                                                                        <strong>Vaccination Date:</strong> {{ vaxinfo.vaccination_date }}<br>
+                                                                                        <hr>
+                                                                                        <strong>Vaccines and Doses</strong> {{ vaxinfo.vaccines_and_doses }}<br>
+                                                                                        {% if vaxinfo.vax1 is not 0 %}
+                                                                                        <strong>Vaccine name:</strong> {{ vaxinfo.vax1_info }}<br>
+                                                                                        {% else %}
+                                                                                        
+                                                                                        {% endif %}
+                                                                                        {% if  vaxinfo.vax2 is not 0  %}
+                                                                                        <strong>Vaccine name:</strong> {{ vaxinfo.vax2_info }}<br>
+                                                                                        {% else %}
+                                                                                        
+                                                                                        {% endif %}
+                                                                                        {% if  vaxinfo.vax3 is not 0  %}
+                                                                                        <strong>Vaccine name:</strong> {{ vaxinfo.vax3_info }}<br>
+                                                                                        {% else %}
+                                                                                        
+                                                                                        {% endif %}
+                                                                                        <br>
+                                                                                        <strong>Previous age:</strong> {{ vaxinfo.date_of_birth }}<br>
+                                                                                        <strong>Previous Birth Height:</strong> {{ vaxinfo.prev_birth_height }} cm<br>
+                                                                                        <strong>Previous Birth Weight:</strong> {{ vaxinfo.prev_birth_weight }} lbs<br>
+                                                                                        <strong>Remarks:</strong> {{ vaxinfo.remarks }}<br>
+                                                                                        <hr>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        {% empty %}
+                                                                            <li class="list-group-item text-center">No Vaccine History</li>
+                                                                        {% endfor %}
+                                                                    </ul>
+                                                                </div>
+                                                            {% endif %}
+                                                            
+                                                               
+                                                             
+                                                                <div class="text-center" id="buttons">
+                                                                    <a href="{% url 'vaxapp:guardian' %}" class="btn btn-danger" id="goBackButton">Go back</a>
+                                                                    <button class="btn btn-primary" onclick="window.print()" id="printButton">Download</button>
+                                                                </div>
+                                                                
+                                                                
+                                                                
+                                                                </div>
+                                                                
+                                                               
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                        
+    
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
