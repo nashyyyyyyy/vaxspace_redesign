@@ -40,6 +40,7 @@
                                 <div style="text-align:center" class="row">
                                     <div class="col">
                                         <input type="hidden" name="child_id" value="{{confirm.child.id}}">
+                                        <input type="hidden" name="brgy" value="{{confirm.child.address.id}}">
                                         <input type="hidden" name="birthheight" value="{{confirm.child.birth_height}}">
                                         <input type="hidden" name="birthweight" value="{{confirm.child.birth_weight}}">
                                         <input type="hidden" name="vax1" value="{{confirm.vax1}}">
@@ -52,14 +53,15 @@
                                         <input type="hidden" name="dob" value="{{confirm.date_of_birth}}">
                                         <h4>{{confirm.child}}</h4><sup>Child's Name</sup>
                                         <hr class="sidebar-divider d-none d-md-block">
-                                        <h5>{{confirm.vaccine_info}}</h5><sup>Vaccines & Doses</sup>
+                                        <h5>{{confirm.vax1_info}} {{confirm.vax2_info}} {{confirm.vax3_info}}</h5><sup>Vaccines & Doses</sup>
                                         <hr class="sidebar-divider d-none d-md-block">
                                         <h5>{{confirm.vax_date}}</h5><sup>Vaccination date</sup>
                                         <hr class="sidebar-divider d-none d-md-block">
                                         <input type="text" name="b_height" placeholder="Previous height:{{confirm.child.birth_height}}cm" required><br><sup>Birth height</sup><br>
                                         <input type="text" name="b_weight" placeholder="Previous height:{{confirm.child.birth_weight}}lbs" required><br><sup>Birth weight</sup>
                                         <hr class="sidebar-divider d-none d-md-block">
-                                        <input type="text" name="remarks" placeholder="Ex: Vaccinated"><br><sup>Remarks</sup>
+                                        <input type="text" name="vaccinator" placeholder="Name of Vaccinator" required><br><sup>Vaccinator</sup><br>
+                                        <input type="text" name="remarks" placeholder="Ex: Vaccinated, Missed, etc." required><br><sup>Remarks</sup>
                                     </div>
                                 </div>
                                 <br>
@@ -68,7 +70,7 @@
                                     <input type="submit" class="btn btn-success" value="Confirm">
                                 </div>
                             </form>
-                            <hr>
+                           
                         </div>
                     </div>
                 </div>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>Overall Vaccination Graph</title>
+    <!-- Add Plotly.js library -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+</head>
+<body>
+    <a href="index/../.."class="btn btn-danger btn-sm text-left">Go back</a><h1 class="text-center">VAXSPACE Vaccination Graph</h1>
+
+    <div id="myChart"></div>
+
+    <script>
+        var vaccineTypes = {{ vaccine_types | safe }};
+        var vaccinatedCounts = {{ vaccinated_counts | safe }};
+        var nonVaccinatedCounts = {{ non_vaccinated_counts | safe }};
+        
+        var trace1 = {
+            x: vaccineTypes,
+            y: vaccinatedCounts,
+            type: 'bar',
+            name: 'Vaccinated',
+            marker: {
+                color: 'rgba(54, 162, 235, 0.5)',
+                line: {
+                    color: 'rgba(54, 162, 235, 1)',
+                    width: 1
+                }
+            }
+        };
+
+        var trace2 = {
+            x: vaccineTypes,
+            y: nonVaccinatedCounts,
+            type: 'bar',
+            name: 'Non-Vaccinated',
+            marker: {
+                color: 'rgba(255, 99, 132, 0.5)',
+                line: {
+                    color: 'rgba(255, 99, 132, 1)',
+                    width: 1
+                }
+            }
+        };
+
+        var data = [trace1, trace2];
+
+        var layout = {
+            title: 'Overall Vaccination Graph',
+            xaxis: {
+                title: 'Vaccine Types'
+            },
+            yaxis: {
+                title: 'Number of Children'
+            },
+            barmode: 'group'
+        };
+
+        Plotly.newPlot('myChart', data, layout);
+        
+    </script>
+</body>
+</html>

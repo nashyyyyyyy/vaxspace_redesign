@@ -41,29 +41,110 @@
                                 {% csrf_token %}
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        {{form.first_name.label}} {{form.first_name}}
+                                        {{ form.first_name.label }} {{ form.first_name }}
+                                        <ul class="errorlist">
+                                            {% for error in form.first_name.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                     <div class="col-sm-6">
-                                        {{form.last_name.label}} {{form.last_name}}
+                                        {{ form.last_name.label }} {{ form.last_name }}
+                                        <ul class="errorlist">
+                                            {% for error in form.last_name.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        {{form.username.label}} {{form.username}}
+                                    <div class="col-sm-6">
+                                        {{ form.username.label }} {{ form.username }}
+                                        <ul class="errorlist">
+                                            {% for error in form.username.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                     <div class="col-sm-6">
-                                        {{form.email.label}} {{form.email}}
-                                    </div>
-                                    <div class="col-sm-6">
-                                        {{form.password1.label}} {{form.password1}}
-                                    </div>
-                                    <div class="col-sm-6">
-                                        {{form.password2.label}} {{form.password2}}
+                                        {{ form.email.label }} {{ form.email }}
+                                        <ul class="errorlist">
+                                            {% for error in form.email.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-6">
+                                        {{ form.password1.label }} {{ form.password1 }}
+                                        <ul class="errorlist">
+                                            {% for error in form.password1.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        {{ form.password2.label }} {{ form.password2 }}
+                                        <ul class="errorlist">
+                                            {% for error in form.password2.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            
+                                <!-- New fields: Role, Address, Contact -->
+                                <div class="form-group row">
+                                    <div class="col-sm-6">
+                                        {{ form.contact.label }} {{ form.contact }}
+                                        <ul class="errorlist">
+                                            {% for error in form.contact.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="address">Address:</label>
+                                        <select id="address" name="address" class="form-control">
+                                            <option value="" selected disabled>Choose an address</option>
+                                            {% for bgy in brgy %}
+                                                <option value="{{ bgy.name }}">{{ bgy.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <ul class="errorlist">
+                                            {% for error in form.address.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    
+                                </div>
+                                <div class="form-group row justify-content-center"> <!-- Centering the row -->
+                                    <div class="col-sm-6">
+                                        {{ form.role.label_tag }}
+                                        <select name="role" class="form-control"> <!-- Dropdown for role -->
+                                            <option value="" selected disabled>Select role</option>
+                                            <option value="Mother" {% if form.role.value == 'Mother' %}selected{% endif %}>Mother</option>
+                                            <option value="Father" {% if form.role.value == 'Father' %}selected{% endif %}>Father</option>
+                                        </select>
+                                        <ul class="errorlist">
+                                            {% for error in form.role.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                            
+                                <!-- Buttons -->
                                 <input type="submit" class="btn btn-warning btn-user btn-block" value="Add account">
                                 <a class="btn btn-danger btn-user btn-block" href="{% url 'vaxapp:loginPage' %}">GO BACK</a>
                             </form>
+                            
+                            
+                            
+                            
                             <hr>
                             <div class="text-center">
                                 

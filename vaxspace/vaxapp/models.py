@@ -6,9 +6,22 @@ from django.contrib.auth.models import User
 from datetime import date
 
 # Create your models here.
+
+class User_info(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE )
+    role = models.CharField(
+        max_length=20,
+        choices=[('Mother','Mother'),('Father','Father')]
+    )
+    address = models.CharField(max_length=100)
+    contact = models.CharField(max_length=12)
+
+    def __str__(self):
+        return self.user.username
+
 class Barangay(models.Model):
     name = models.CharField(max_length = 100)
-    healthworker = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    healthworker = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     
 
     def __str__(self):
@@ -35,39 +48,24 @@ class Register(models.Model):
     child_name = models.CharField(max_length = 100,null=True)       
     date_of_birth = models.DateField(null=True)     
     place_of_birth = models.CharField(max_length = 100,null=True)  
-    address = models.ForeignKey(Barangay, null=True, on_delete=models.CASCADE) 
+    address = models.ForeignKey(Barangay, null=True, on_delete=models.SET_NULL) 
     contact = models.IntegerField(null=True)  
     mother_name = models.CharField(max_length = 100,null=True)       
     father_name = models.CharField(max_length = 100 , null=True)   
     birth_height = models.IntegerField(null=True) 
     birth_weight = models.IntegerField(null=True) 
     sex = models.CharField(max_length = 10, null=True)
-    added_by = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
+    added_by = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     
     
 
     def __str__(self):
         return self.child_name
-
-class Vaccine_record(models.Model):
-    child = models.ForeignKey(Register, null=True, on_delete=models.SET_NULL)
-    vax1 = models.IntegerField(null=True)
-    vax1_info = models.TextField(null=True)
-    vax2 = models.IntegerField(null=True)
-    vax2_info = models.TextField(null=True)
-    vax3 = models.IntegerField(null=True)
-    vax3_info = models.TextField(null=True)
-    vaccination_date = models.DateTimeField()
-    date_of_birth = models.TextField(null=True)     
-    prev_birth_weight = models.IntegerField(null=True)
-    prev_birth_height = models.IntegerField(null=True)
-    remarks = models.TextField(default=None)
-
 class Schedule(models.Model):
-    child = models.ForeignKey(Register, on_delete=models.SET_NULL, null=True)       
+    child = models.ForeignKey(Register, on_delete=models.CASCADE, null=True)       
     vax_date = models.DateTimeField(null=True)
     brgy = models.ForeignKey(Barangay, on_delete=models.SET_NULL, null=True)
-    guardian = models.ForeignKey(User, default=None, on_delete=models.CASCADE)
+    guardian = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     date_of_birth = models.TextField(null=True)     
     created = models.DateTimeField()
     vax1 = models.IntegerField(null=True)
@@ -78,4 +76,42 @@ class Schedule(models.Model):
     vax3_info = models.TextField(null=True)
     def __str__(self):
         return self.child
+
+
+class Vaccine_record(models.Model):
+    child = models.ForeignKey(Register, null=True, on_delete=models.CASCADE)
+    vax1 = models.IntegerField(null=True)
+    vax1_info = models.TextField(null=True)
+    vax2 = models.IntegerField(null=True)
+    vax2_info = models.TextField(null=True)
+    vax3 = models.IntegerField(null=True)
+    vax3_info = models.TextField(null=True)
+    vaccination_date = models.DateTimeField()
+    date_of_birth = models.TextField(null=True)     
+    prev_birth_weight = models.IntegerField(null=True)
+    prev_birth_height = models.IntegerField(null=True)
+    vaccinator = models.TextField(default=None)
+    remarks = models.TextField(default=None)
+    brgy = models.ForeignKey(Barangay, null=True, on_delete=models.CASCADE)
+
+class Admin_record(models.Model):
+
+    child_record = models.ForeignKey(Vaccine_record,null=True, on_delete=models.SET_NULL)   
+    child_id = models.IntegerField(null=True)
+    child_name = models.CharField(max_length = 50,null=True)      
+    date_of_birth = models.CharField(max_length = 100,null=True)     
+    place_of_birth = models.CharField(max_length = 50,null=True)  
+    address = models.CharField(max_length = 50,null=True) 
+    contact = models.IntegerField(null=True)  
+    mother_name = models.CharField(max_length = 50,null=True)       
+    father_name = models.CharField(max_length = 50 , null=True)   
+    birth_height = models.IntegerField(null=True) 
+    birth_weight = models.IntegerField(null=True) 
+    sex = models.CharField(max_length = 10, null=True)
+    added_by = models.CharField(max_length = 50,null=True)
+    
+    
+
+    def __str__(self):
+        return self.child_name
 

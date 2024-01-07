@@ -23,9 +23,16 @@
 
 </head>
 <style>
+    .form-control {
+        text-align: center;
+        border: none;
+        border-radius: 0; /* Remove border-radius if not needed */
+        background-color: transparent;
+    }
     @media print {
         #printButton,
-        #goBackButton {
+        #goBackButton,
+        #goBackSubmit {
             display: none;
         }
     }
@@ -40,35 +47,56 @@
 
 
 <body class="bg-gradient-primary">
-
-    
-                                        <div class="container " >
-                                           
-                                            <div class="card o-hidden border-0 shadow-lg my-5">
-                                                <div class="card-body p-0 bg-image">
-                                                    
-                                                    <!-- Nested Row within Card Body -->
-                                                    <div class="row">
-                                                        
-                                                        <div class="col-lg-7 mx-auto">
-                                                            <div class="p-5 text-gray-900">
-                                                                
-                                                                <h1 class="text-center">VAXSPACE</h1>
-                                                                <h4 class="text-center mb-4">VACCINATION RECORD <br><small>OF</small> <br>{{view_id.child_name}}</h4>
-                                                                <div class="row">
-                                                                    <div class="col-md-6 text-center">
-                                                                        <h5 class="mb-1">{{view_id.date_of_birth}}<br><sup>Date of birth</sup></h5>
-                                                                        <h5 class="mb-1">{{view_id.place_of_birth}}<br><sup>Place of birth</sup></h5>
-                                                                        <h5 class="mb-1">{{view_id.address}}<br><sup>Address</sup></h5>
-                                                                        <h5 class="mb-1">{{view_id.sex}}<br><sup>Sex</sup></h5>
-                                                                    </div>
-                                                                    <div class="col-md-6 text-center">
-                                                                        <h5 class="mb-1">{{view_id.mother_name}}<br><sup>Mother's name</sup></h5>
-                                                                        <h5 class="mb-1">{{view_id.father_name}}<br><sup>Father's name</sup></h5>
-                                                                        <h5 class="mb-1">{{view_id.birth_height}} cm<br><sup>Current Birth height</sup></h5>
-                                                                        <h5 class="mb-1">{{view_id.birth_weight}} lbs<br><sup>Current Birth weight</sup></h5>
-                                                                    </div>  
-                                                                    
+    {% include 'vaxapp/messages.html' %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0 bg-image">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-12 mx-auto">
+                                <div class="p-5 text-gray-900">
+                                    <h1 class="text-center">VAXSPACE</h1>
+                                    <h4 class="text-center mb-4">VACCINATION RECORD</h4>
+                                    <!-- Your form content goes here -->
+                                    <form method="POST" action="{% url 'vaxapp:save_to_admin' %}">
+                                                                        {% csrf_token %}
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 text-center">
+                                                                                {% for vaxinfos in vax_info %}
+                                                                                <input type="hidden" name="child_record" value="{{vaxinfos.id}}">
+                                                                                {% endfor %}
+                                                                                <input type="hidden" name="child_id" value="{{view_id.id}}">
+                                                                                <input type="text" class="form-control" name="child_name" value="{{ view_id.child_name }}" placeholder="Child's name">
+                                                                                <sup>Child's name</sup>
+                                                                                <input type="text" class="form-control" name="date_of_birth" value="{{ view_id.date_of_birth }}" placeholder="Date of birth">
+                                                                                <sup>Date of birth</sup>
+                                                                                <input type="text" class="form-control" name="place_of_birth" value="{{ view_id.place_of_birth }}" placeholder="Place of birth">
+                                                                                <sup>Place of birth</sup>
+                                                                                <input type="text" class="form-control" name="address" value="{{ view_id.address }}" placeholder="Address">
+                                                                                <sup>Address</sup>
+                                                                                <input type="text" class="form-control" name="contact" value="{{ view_id.contact }}" placeholder="Parent's Contact number">
+                                                                                <sup>Parent's Contact number</sup>
+                                                                                <!-- Other input fields in a similar structure -->
+                                                                            </div>
+                                                                            <div class="col-md-6 text-center">
+                                                                                <input type="text" class="form-control" name="sex" value="{{ view_id.sex }}" placeholder="Sex">
+                                                                                <sup>Sex</sup>
+                                                                                <input type="text" class="form-control" name="mother_name" value="{{ view_id.mother_name }}" placeholder="Mother's name">
+                                                                                <sup>Mother's name</sup>
+                                                                                <input type="text" class="form-control" name="father_name" value="{{ view_id.father_name }}" placeholder="Father's name">
+                                                                                <sup>Father's name</sup>
+                                                                                <input type="text" class="form-control" name="birth_height" value="{{ view_id.birth_height }}" placeholder="Current Birth height">
+                                                                                <sup>Current Birth height in (cm)</sup>
+                                                                                <input type="text" class="form-control" name="birth_weight" value="{{ view_id.birth_weight }}" placeholder="Current Birth weight">
+                                                                                <sup>Current Birth weight in (lbs)</sup>
+                                                                                <!-- Other input fields in a similar structure -->
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col text-center">
+                                                                            <h5 class="mb-1 text-center"><sup>Added by</sup><br>{{view_id.added_by.first_name}} {{view_id.added_by.last_name}}</h5>
+                                                                        </div>
                                                                 </div>
                                                                 
                                                                 
@@ -102,6 +130,7 @@
                                                                                         <strong>Previous age:</strong> {{ vaxinfo.date_of_birth }}<br>
                                                                                         <strong>Previous Birth Height:</strong> {{ vaxinfo.prev_birth_height }} cm<br>
                                                                                         <strong>Previous Birth Weight:</strong> {{ vaxinfo.prev_birth_weight }} lbs<br>
+                                                                                        <strong>Vaccinator:</strong> {{ vaxinfo.vaccinator }}<br>
                                                                                         <strong>Remarks:</strong> {{ vaxinfo.remarks }}<br>
                                                                                         <hr>
                                                                                     </div>
@@ -118,24 +147,23 @@
                                                                 <div class="text-center" id="buttons">
                                                                 {% if user.is_superuser %}
                                                                     <a href="{% url 'vaxapp:admin_tables' %}" class="btn btn-danger" id="goBackButton">Go back</a>
+                                                                    <input type="submit" class="btn btn-success" id="goBackSubmit" value="Save changes">
                                                                 {% else %}
+                                                                                                                              
                                                                     <a href="{% url 'vaxapp:tables' %}" class="btn btn-danger" id="goBackButton">Go back</a>
+                                                                    <input type="submit" class="btn btn-success" id="goBackSubmit" value="Submit to admin">
+                                                                </form>
                                                                 {% endif %}
                                                                     <button class="btn btn-primary" onclick="window.print()" id="printButton">Download</button>
                                                                 </div>
-                                                                
-                                                                
-                                                                
-                                                                </div>
-                                                                
-                                                               
-                                                                
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        
+                                        </div>
+                                    </div>
+                                </div>
                                         
     
 
@@ -148,7 +176,7 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
-
+    <script src="{% static 'js/alert.js' %}"></script>
 </body>
 
 </html>

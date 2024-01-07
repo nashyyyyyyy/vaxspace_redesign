@@ -21,7 +21,7 @@
     <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/alert.css' %}" rel="stylesheet">
-
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
 <body id="page-top">
@@ -64,7 +64,7 @@
 
             <!-- Nav Item - Charts -->
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'vaxapp:charts' %}">
+                <a class="nav-link" href="{% url 'vaxapp:overall_vaccination_graph' %}">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Charts</span></a>
             </li>
@@ -394,57 +394,27 @@
                     <div class="row">
 
                         <!-- Area Chart -->
-                        <div class="col-xl-8 col-lg-7">
+                        <div class="col-xl col-lg">
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Vaccination overview</h6>
-                                    <div class="dropdown no-arrow">
+                                <div class="card">
+                                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Vaccination Overview</h6>
                                         
                                     </div>
+                      
+                                    
+                                  
                                 </div>
+                            
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="chart-area">
-                                        <!--<canvas id="myAreaChart"></canvas>-->
-                                      
-                                    </div>
+                                    <div id="myChart">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Pie Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Supply</h6>
-                                    <div class="dropdown no-arrow">
-                                       
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <!--<canvas id="myPieChart"></canvas>-->
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        
 
                     <!-- Content Row -->
                     <div class="row">
@@ -491,35 +461,60 @@
     </a>
 
     <!-- Admin Profile -->
-    <div class="modal fade" id="adminmodal" tabindex="-1" role="dialog" aria-labelledby="adminmodal" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="adminmodal">User profile</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            <div class="modal-body text-center">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4>{{user.first_name}}</h4><sup>(First Name)</sup>
-                        <h4>{{user.last_name}}</h4><sup>(Last Name)</sup>
+    <form method="post" action="{% url 'vaxapp:update_admin' %}">
+        {% csrf_token %}
+        <div class="modal fade" id="adminmodal" tabindex="-1" role="dialog" aria-labelledby="adminmodallabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="adminmodallabel">User Profile</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="col-md-6">
-                        <h4>{{user.username}}</h4><sup>(Username)</sup>
-                        <h4>{{user.email}}</h4><sup>(Email address)</sup>
+                    <div class="modal-body text-center">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="first_name">First Name</label>
+                                <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name">Last Name</label>
+                                <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" value="{{ user.username }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="password">Password</label>
+                                <input type="password" id="password" name="password" value="{{ user.password }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" value="{{ user.email }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="checkbox" id="enableSaveButton"> Check to edit
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-warning" id="saveChangesBtn" disabled>Save Changes</button>
                     </div>
                 </div>
             </div>
-            
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-warning">Edit profile</button>
-            </div>
         </div>
-        </div>
-    </div>
+    </form>
 
 
     <!-- Logout Modal-->
@@ -559,6 +554,66 @@
     <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
     <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
     <script src="{% static 'js/alert.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#enableSaveButton').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#saveChangesBtn').prop('disabled', false);
+                } else {
+                    $('#saveChangesBtn').prop('disabled', true);
+                }
+            });
+        });
+        </script>
+        <script>
+            var vaccineTypes = {{ vaccine_types | safe }};
+            var vaccinatedCounts = {{ vaccinated_counts | safe }};
+            var nonVaccinatedCounts = {{ non_vaccinated_counts | safe }};
+            
+            var trace1 = {
+                x: vaccineTypes,
+                y: vaccinatedCounts,
+                type: 'bar',
+                name: 'Vaccinated',
+                marker: {
+                    color: 'rgba(54, 162, 235, 0.5)',
+                    line: {
+                        color: 'rgba(54, 162, 235, 1)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var trace2 = {
+                x: vaccineTypes,
+                y: nonVaccinatedCounts,
+                type: 'bar',
+                name: 'Non-Vaccinated',
+                marker: {
+                    color: 'rgba(255, 99, 132, 0.5)',
+                    line: {
+                        color: 'rgba(255, 99, 132, 1)',
+                        width: 1
+                    }
+                }
+            };
+    
+            var data = [trace1, trace2];
+    
+            var layout = {
+                title: 'Overall Vaccination Graph',
+                xaxis: {
+                    title: 'Vaccine Types'
+                },
+                yaxis: {
+                    title: 'Number of Children'
+                },
+                barmode: 'group'
+            };
+    
+            Plotly.newPlot('myChart', data, layout);
+            
+        </script>
 </body>
 
 </html>

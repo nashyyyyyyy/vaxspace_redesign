@@ -20,14 +20,14 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static 'css/sb-admin-2.min.css '%}" rel="stylesheet">
-
+    <link href="{% static 'css/alert.css' %}" rel="stylesheet">
     <!-- Custom styles for this page -->
     <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
 
 </head>
 
 <body id="page-top">
-
+    {% include 'vaxapp/messages.html' %}
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -73,7 +73,7 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item active">
-                <a class="nav-link" href="{% url 'vaxapp:tables' %}">
+                <a class="nav-link" href="{% url 'vaxapp:admin_tables' %}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Records</span></a>
             </li>
@@ -204,26 +204,28 @@
                                     </thead>
                                     
                                     <tbody>
+                                        
                                         {% for recs in admin_records %}
                                         <tr>
- 
-                                        <td>{{recs.child_name}}</td>
+                                        
+                                        <td>{{recs.child_name}}{{child_record.child_id}}</td>
                                         <td>{{recs.date_of_birth}}</td>
                                         <td>{{recs.address}}</td>
                                         <td>{{recs.contact}}</td>
                                         <td>{{recs.sex}}</td>
                                         <td>{{recs.added_by.first_name}} {{recs.added_by.last_name}}</td>
                                         <td style="text-align:center">
-                                            <a href="{% url 'vaxapp:view_record_staff' recs.id %}">
+                                            <a href="{% url 'vaxapp:view_record_staff' recs.id %}" style="text-decoration:none">
                                                 <button type="button" class="btn btn-success btn-sm">
                                                     View record
                                                 </button>
                                                 </a>
-                                                <a href="{% url 'vaxapp:delete' recs.id %}" onclick="return confirm('Are you sure you want to delete this?');">
+                                                <a href="{% url 'vaxapp:delete_child' recs.id %}" onclick="return confirm('Are you sure you want to delete this?');">
                                                     <button class="btn btn-danger btn-sm">Delete</button>
                                                 </a>
                                         </td>
                                         </tr>
+                                     
                                         {% empty %}
                                             <tr>
                                                 <td colspan="9" style="text-align:center">No Records yet.</td>
@@ -269,12 +271,61 @@
                                         <td>{% if users.is_active %}
                                             <p class="text-success">Active</p>
                                             {% else %}
-                                            <p class="text-danger">Active</p>
+                                            <p class="text-danger">Inactive</p>
                                             {% endif %}
                                         </td>
                                         <td style="text-align:center">
-                                            <a href="#"><button id="add" class="btn btn-success btn-sm"><i class="fas fa-solid fa-eye "></i> Edit</button></a>
-                                            <a href="{% url 'vaxapp:delete' users.id %}" onclick="return confirm('Are you sure you want to delete this?');">
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#guardianmodal{{users.id}}">
+                                                <i class="fas fa-solid fa-pen "></i> Edit
+                                            </button>
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="guardianmodal{{users.id}}" tabindex="-1" role="dialog" aria-labelledby="guardianmodallabel{{users.id}}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="guardianmodallabel{{users.id}}">Update guardian's info</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <form method="post" action="{% url 'vaxapp:edit_guardian' users.id %}">
+                                                            {% csrf_token %}
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label for="username">Username</label>
+                                                                    <input type="text" class="form-control" id="username" name="username" value="{{ users.username }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="first_name">First Name</label>
+                                                                    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ users.first_name }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="last_name">Last Name</label>
+                                                                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ users.last_name }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="email">Email</label>
+                                                                    <input type="email" class="form-control" id="email" name="email" value="{{ users.email }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="is_active1">Active</label>
+                                                                    <input type="radio" class="form-control" id="is_active1" name="is_active" value="True" required>
+                                                                    <label for="is_active0">Inactive</label>
+                                                                    <input type="radio" class="form-control" id="is_active0" name="is_active" value="False" required>
+                                                                </div>
+                                                                <!-- Add other fields as needed -->
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <a href="{% url 'vaxapp:delete_user' users.id %}" onclick="return confirm('Are you sure you want to delete this?');">
                                                 <button class="btn btn-danger btn-sm">Delete</button>
                                             </a>
                                         </td>
@@ -328,8 +379,145 @@
                                             {% endif %}
                                         </td>
                                         <td style="text-align:center">
-                                            <a href="#"><button id="add" class="btn btn-success btn-sm"><i class="fas fa-solid fa-pen "></i> Edit</button></a>
-                                            <a href="{% url 'vaxapp:delete' worker.id %}" onclick="return confirm('Are you sure you want to delete this?');">
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#healthworkermodal{{worker.id}}">
+                                                <i class="fas fa-solid fa-pen "></i> Edit
+                                            </button>
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="healthworkermodal{{worker.id}}" tabindex="-1" role="dialog" aria-labelledby="healthworkermodallabel{{worker.id}}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="healthworkermodallabel{{worker.id}}">Update Healthworker's info</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <form method="post" action="{% url 'vaxapp:edit_healthworker' worker.id %}">
+                                                            {% csrf_token %}
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label for="username">Username</label>
+                                                                    <input type="text" class="form-control" id="username" name="username" value="{{ worker.username }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="first_name">First Name</label>
+                                                                    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ worker.first_name }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="last_name">Last Name</label>
+                                                                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ worker.last_name }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="email">Email</label>
+                                                                    <input type="email" class="form-control" id="email" name="email" value="{{ worker.email }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="is_active1">Active</label>
+                                                                    <input type="radio" class="form-control" id="is_active1" name="is_active" value="True" required>
+                                                                    <label for="is_active0">Inactive</label>
+                                                                    <input type="radio" class="form-control" id="is_active0" name="is_active" value="False" required>
+                                                                </div>
+                                                                <!-- Add other fields as needed -->
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="{% url 'vaxapp:delete_worker' worker.id %}" onclick="return confirm('Are you sure you want to delete this?');">
+                                                <button class="btn btn-danger btn-sm">Delete</button>
+                                            </a>
+                                        </td>
+                                        </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="9" style="text-align:center">No Records yet.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Barangay's records</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    
+                                    
+                                    <thead>
+                                        <tr>
+                                            <th>Barangay name</th>
+                                            <th>Healthworkers</th>
+                                            <th>Status</th>
+                                            <th style="text-align:center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+                                        {% for brgy in barangay_list %}
+                                        <tr>
+ 
+                                        <td>{{brgy.name}}</td>
+                                        <td>{{brgy.healthworker}}</td>
+                                        <td>{% if brgy.healthworker.is_active %}
+                                            <p class="text-success">Active</p>
+                                            {% else %}
+                                            <p class="text-danger">Inactive</p>
+                                            {% endif %}
+                                        </td>
+                                        <td style="text-align:center">
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#barangaymodal{{brgy.id}}">
+                                                <i class="fas fa-solid fa-pen "></i> Edit
+                                            </button>
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="barangaymodal{{brgy.id}}" tabindex="-1" role="dialog" aria-labelledby="barangaylabel{{brgy.id}}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="barangaylabel{{brgy.id}}">Update Barangay's info</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <form method="post" action="{% url 'vaxapp:edit_barangay' brgy.id %}">
+                                                            {% csrf_token %}
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label for="name">Barangay Name</label>
+                                                                    <input type="text" class="form-control" id="name" name="name" value="{{ brgy.name }}">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="healthworker">Assign Healthworker</label>
+                                                                    <select class="form-control" id="healthworker" name="healthworker">
+                                                                        <option value="{{ brgy.healthworker.id }}">{{ brgy.healthworker }}</option>
+                                                                        {% for worker_list in healthworker_list %}
+                                                                            <option value="{{ worker_list.username }}">{{ worker_list.username }}</option>
+                                                                        {% endfor %}
+                                                                        <option value="">None</option>
+                                                                    </select>
+                                                                </div>
+                            
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="{% url 'vaxapp:delete_brgy' brgy.id %}" onclick="return confirm('Are you sure you want to delete this?');">
                                                 <button class="btn btn-danger btn-sm">Delete</button>
                                             </a>
                                         </td>
@@ -383,8 +571,57 @@
                                         {% endif %}</td>
                                         <td>{{vax.created}}</td>
                                         <td style="text-align:center">
-                                            <a href="#"><button id="add" class="btn btn-success btn-sm"><i class="fas fa-solid fa-pen "></i> Edit</button></a>
-                                            <a href="{% url 'vaxapp:delete' vax.id %}" onclick="return confirm('Are you sure you want to delete this?');">
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#vaccinemodal{{vax.id}}">
+                                                <i class="fas fa-solid fa-pen "></i> Edit
+                                            </button>
+                                             <!-- Modal -->
+                                             <div class="modal fade" id="vaccinemodal{{vax.id}}" tabindex="-1" role="dialog" aria-labelledby="vaccinemodallabel{{vax.id}}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="vaccinemodallabel{{vax.id}}">Update Vaccines's info</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <form method="POST" action="{% url 'vaxapp:edit_vaccine' vax.id %}">
+                                                            {% csrf_token %}
+                                                            <div style="text-align:center" class="row">
+                                                                <div class="col">  
+                                                                    <label for="vaxname">Vaccine name:</label>
+                                                                    <input type="text" id="vaxname" name="name" value="{{vax.name}}" required>
+                                                                </div>
+                                                                <div class="col">  
+                                                                    <label for="desc">Description of vaccine:</label>
+                                                                    <input type="text" id="desc" name="description" value="{{vax.description}}">
+                                                                </div>
+                                                                <div class="col">  
+                                                                    <label for="dose1">First dose:</label>
+                                                                    <input type="checkbox"  name="chk1"  {% if vax.dose1 %} checked {% endif %} value="True">
+
+                                                                    <input type="number" id="dose1" name="recommended_age1"  placeholder="{% if vax.recommended_age1 is not None %}{{vax.recommended_age1}} day(s) old{% endif %}" required>
+                                                                </div>
+                                                                <div class="col">  
+                                                                    <label for="dose2">Second dose:</label>
+                                                                    <input type="checkbox"  name="chk2"  {% if vax.dose2 %} checked {% endif %} value="True">
+                                                                    <input type="number" id="dose2" name="recommended_age2"  placeholder="{% if vax.recommended_age2 is not None %}{{vax.recommended_age2}} day(s) old{% endif %}" >
+                                                                </div>
+                                                                <div class="col">  
+                                                                    <label for="dose3">Third dose:</label>
+                                                                    <input type="checkbox"  name="chk3"  {% if vax.dose3 %} checked {% endif %} value="True">
+                                                                    <input type="number" id="dose3" name="recommended_age3" placeholder="{% if vax.recommended_age3 is not None %}{{vax.recommended_age3}} day(s) old{% endif %}" >
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                <input type="submit" class="btn btn-primary" value="Add">
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="{% url 'vaxapp:delete_vaccine' vax.id %}" onclick="return confirm('Are you sure you want to delete this?');">
                                                 <button class="btn btn-danger btn-sm">Delete</button>
                                             </a>
                                         </td>
@@ -400,53 +637,6 @@
                         </div>
                     </div>
 
-
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Barangay's records</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    
-                                    
-                                    <thead>
-                                        <tr>
-                                            <th>Barangay name</th>
-                                            <th>Healthworkers</th>
-                                            <th>Status</th>
-                                            <th style="text-align:center">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    
-                                    <tbody>
-                                        {% for brgy in barangay_list %}
-                                        <tr>
- 
-                                        <td>{{brgy.name}}</td>
-                                        <td>{{brgy.healthworker}}</td>
-                                        <td>{% if brgy.healthworker.is_active %}
-                                            <p class="text-success">Active</p>
-                                            {% else %}
-                                            <p class="text-danger">Active</p>
-                                            {% endif %}
-                                        </td>
-                                        <td style="text-align:center">
-                                            <a href="#"><button id="add" class="btn btn-success btn-sm"><i class="fas fa-solid fa-pen "></i> Edit</button></a>
-                                            <!--<a href=""><button id="view" class="btn btn-info btn-sm"><i class="fas fa-solid fa-eye "></i> View vax record</button></a>
-                                            <a href=""><button id="del" class="btn btn-danger btn-sm"><i class="fas fa-solid fa-trash-can "></i> Delete</button></a>-->
-                                        </td>
-                                        </tr>
-                                        {% empty %}
-                                            <tr>
-                                                <td colspan="9" style="text-align:center">No Records yet.</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
                 <!-- /.container-fluid -->
@@ -500,7 +690,7 @@
             
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-warning">Edit profile</button>
+            
             </div>
         </div>
         </div>
@@ -539,7 +729,7 @@
     <!-- Page level plugins -->
     <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
-
+    <script src="{% static 'js/alert.js' %}"></script>
     <!-- Page level custom scripts -->
     <script src="{% static 'js/demo/datatables-demo.js' %}"></script>
     <script>
@@ -577,7 +767,7 @@
             }
         });
     </script>
-    
+
     
     
     

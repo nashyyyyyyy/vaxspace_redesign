@@ -30,41 +30,75 @@
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
-                <div class="row justify-content-center">
+                <div class="row justify-content-center align-items-center">
                     <div class="col-lg-7">
                         <div class="p-5">
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4"><strong>CREATE AN ACCOUNT FOR HEALTHWORKER</strong></h1>
                             </div>
-                            <form method="POST" class="user" style="color: black;">
+                            <form method="POST" class="user" style="text-align: center; color: black;" autocomplete="off">
                                 {% csrf_token %}
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        {{form.first_name.label}} {{form.first_name}}
+                                        {{ form.first_name.label }} {{ form.first_name }}
+                                        <ul class="errorlist">
+                                            {% for error in form.first_name.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                     <div class="col-sm-6">
-                                        {{form.last_name.label}} {{form.last_name}}
+                                        {{ form.last_name.label }} {{ form.last_name }}
+                                        <ul class="errorlist">
+                                            {% for error in form.last_name.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        {{form.username.label}} {{form.username}}
+                                    <div class="col-sm-6">
+                                        {{ form.username.label }} {{ form.username }}
+                                        <ul class="errorlist">
+                                            {% for error in form.username.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                     <div class="col-sm-6">
-                                        {{form.email.label}} {{form.email}}
-                                    </div>
-                                    <div class="col-sm-6">
-                                        {{form.password1.label}} {{form.password1}}
-                                    </div>
-                                    <div class="col-sm-6">
-                                        {{form.password2.label}} {{form.password2}}
+                                        {{ form.email.label }} {{ form.email }}
+                                        <ul class="errorlist">
+                                            {% for error in form.email.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
                                     </div>
                                 </div>
-                                <input type="submit" class="btn btn-warning btn-user btn-block" value="Add account"><br>
-                                <a class="btn btn-danger  btn-user btn-block" href="{% url 'vaxapp:index' %}">GO BACK</a>
+                                <div class="form-group row">
+                                    <div class="col-sm-6">
+                                        {{ form.password1.label }} {{ form.password1 }}
+                                        <ul class="errorlist">
+                                            {% for error in form.password1.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        {{ form.password2.label }} {{ form.password2 }}
+                                        <ul class="errorlist">
+                                            {% for error in form.password2.errors %}
+                                                <li class="text-danger">{{ error }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <input type="submit" class="btn btn-warning btn-user btn-block" value="Add account">
+                                <a class="btn btn-danger btn-user btn-block" href="{% url 'vaxapp:index' %}">GO BACK</a>
                             </form>
                             <hr>
-                           
+                            <div class="text-center">
+                                
+                            </div>
                         </div>
                     </div>
                 </div>

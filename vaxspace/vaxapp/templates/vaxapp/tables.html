@@ -185,6 +185,7 @@
                                         <tr>
                                             <th>Child's Name</th>
                                             <th>Date of birth</th>
+                                            <th>Current age</th>
                                             <th>Parent's contact</th>
                                             <th>Sex</th>
                                             <th>Added by</th>
@@ -198,17 +199,22 @@
  
                                         <td>{{recs.child_name}}</td>
                                         <td>{{recs.date_of_birth}}</td>   
+                                        <td>{{recs.days_old}}</td>
                                         <td>{{recs.contact}}</td>
                                         <td>{{recs.sex}}</td>
                                         <td>{{recs.added_by.first_name}} {{recs.added_by.last_name}}</td>
                                         <td style="text-align:center">
-                                            <a href="{% url 'vaxapp:view_record_staff' recs.id %}">
-                                                <button type="button" class="btn btn-success btn-sm">
+                                            <a href="{% url 'vaxapp:view_record_staff' recs.id %}" style="text-decoration:none">
+                                                <button type="button" class="btn btn-primary btn-sm">
                                                     View record
                                                 </button>
                                             </a>
-                                            <a href="{% url 'vaxapp:add_record' recs.id %}"><button id="add" class="btn btn-warning btn-sm">Add to Schedule</button></a>
-                                            <a href="{% url 'vaxapp:remove' recs.id %}" onclick="return confirm('Are you sure you want to delete this?');">
+                                           {% if recs.vaccine_doses %}
+                                                <a href="{% url 'vaxapp:add_record' recs.id %}" style="text-decoration:none">
+                                                    <button id="add" class="btn btn-success btn-sm">Available vaccines</button>
+                                                </a>
+                                            {% endif %}
+                                            <a href="{% url 'vaxapp:remove_child' recs.id %}" onclick="return confirm('Are you sure you want to delete this?');">
                                                 <button class="btn btn-danger btn-sm">Delete</button>
                                             </a>
                                             
@@ -265,16 +271,102 @@
                                             </td>
                                             <td style="text-align:center">
                                                 {% if due_today == sched.vax_date.date %}
+                                                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editmodal{{ sched.id }}">
+                                                    Edit
+                                                </button>
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="editmodal{{ sched.id }}" tabindex="-1" role="dialog" aria-labelledby="editmodallabel{{ sched.id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h5 class="modal-title" id="editmodallabel{{ sched.id }}">Update this schedule? {{ sched.vax_date }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                        <form method="post" action="{% url 'vaxapp:edit_schedule' sched.id %}">
+                                                                {% csrf_token %}
+                                                        
+                                                                <input type="datetime-local" name="update_sched" required>
+
+                                                        <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                                        </div>
+                                                        </form>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    </div>
+                                                </div>
                                                     <a href="{% url 'vaxapp:confirmation' sched.id %}"><button class="btn btn-success btn-sm">Confirm</button></a>
                                                 {% elif due_today < sched.vax_date.date %}
-                                                <a href="{% url 'vaxapp:remove' sched.id %}" onclick="return confirm('Are you sure you want to remove this item?');">
-                                                    <button class="btn btn-warning btn-sm">Remove</button>
-                                                </a>
-                                                
-                                                
+                                                <!-- Button trigger modal -->
+                                                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editmodal{{ sched.id }}">
+                                                    Edit
+                                                </button>
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="editmodal{{ sched.id }}" tabindex="-1" role="dialog" aria-labelledby="editmodallabel{{ sched.id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h5 class="modal-title" id="editmodallabel{{ sched.id }}">Update this schedule? {{ sched.vax_date }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                        <form method="post" action="{% url 'vaxapp:edit_schedule' sched.id %}">
+                                                                {% csrf_token %}
+                                                        
+                                                                <input type="datetime-local" name="update_sched" required>
+
+                                                        <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                                        </div>
+                                                        </form>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                                                                   
                                                 {% else %}
-                                                    <a href="#"><button class="btn btn-danger btn-sm">Reschedule</button></a>
+                                                
+                                                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#reschedmodal{{ sched.id }}">
+                                                    Reschedule
+                                                </button>
+                                                <a href="{% url 'vaxapp:confirmation' sched.id %}"><button class="btn btn-danger btn-sm">Missed</button></a>
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="reschedmodal{{ sched.id }}" tabindex="-1" role="dialog" aria-labelledby="reschedlabel{{ sched.id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h5 class="modal-title" id="reschedlabel{{ sched.id }}">Reschedule</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                        <form method="post" action="{% url 'vaxapp:edit_schedule' sched.id %}">
+                                                                {% csrf_token %}
+                                                                <input type="datetime-local" name="update_sched" required>
+                                                        <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                                        </div>
+                                                        </form>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    </div>
+                                                </div>
                                                 {% endif %}
+                                                <a href="{% url 'vaxapp:remove_sched' sched.id %}" onclick="return confirm('Are you sure you want to remove this item?');">
+                                                    <button class="btn btn-danger btn-sm">Remove</button>
+                                                </a>
                                             </td>
                                         </tr>
                                     {% empty %}
@@ -341,7 +433,7 @@
             
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-warning">Edit profile</button>
+           
             </div>
         </div>
         </div>

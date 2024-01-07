@@ -67,8 +67,10 @@
                                                                         <h5 class="mb-1">{{view_id.father_name}}<br><sup>Father's name</sup></h5>
                                                                         <h5 class="mb-1">{{view_id.birth_height}} cm<br><sup>Current Birth height</sup></h5>
                                                                         <h5 class="mb-1">{{view_id.birth_weight}} lbs<br><sup>Current Birth weight</sup></h5>
-                                                                    </div>  
-                                                                    
+                                                                    </div >  
+                                                                    <div class="col text-center">
+                                                                    <h5 class="mb-1 text-center"><sup>Added by</sup><br>{{view_id.added_by.first_name}} {{view_id.added_by.last_name}}</h5>
+                                                                    </div>
                                                                 </div>
                                                                 
                                                                 {% if vax_info is not none %}
@@ -101,6 +103,7 @@
                                                                                         <strong>Previous age:</strong> {{ vaxinfo.date_of_birth }}<br>
                                                                                         <strong>Previous Birth Height:</strong> {{ vaxinfo.prev_birth_height }} cm<br>
                                                                                         <strong>Previous Birth Weight:</strong> {{ vaxinfo.prev_birth_weight }} lbs<br>
+                                                                                        <strong>Vaccinator:</strong> {{ vaxinfo.vaccinator }}<br>
                                                                                         <strong>Remarks:</strong> {{ vaxinfo.remarks }}<br>
                                                                                         <hr>
                                                                                     </div>
